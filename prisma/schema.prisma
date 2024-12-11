@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Product {
+  id          Int        @id @default(autoincrement())
+  ///////////////
+  name        String
+  price       Float
+  description String?
+  stock       Int
+  /////////////////
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relación con OrderItem
+  OrderItems  OrderItem[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  /////////////
+  userId      Int         // ID del usuario que realiza la orden
+  //////////////
+  // no interactua con el cliente
+  totalAmount Float       @default(0.0)
+  status      String      @default("Pending")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relación con OrderItem
+  OrderItems  OrderItem[]
+}
+
+model OrderItem {
+  id          Int      @id @default(autoincrement())
+  //////////////
+  quantity    Int
+  price       Float    // Precio por unidad en el momento de la compra
+
+  //claves foraneas
+  orderId     Int
+  productId   Int
+//////////////////
+
+  // Relaciones
+  Order       Order    @relation(fields: [orderId], references: [id])
+  Product     Product  @relation(fields: [productId], references: [id])
+}
+
+
+model Customer {
+  id    Int    @id @default(autoincrement())
+  ///////////////////
+  name  String
+  email String @unique
+  ////////////////////
+  Orders  Order[]
+}

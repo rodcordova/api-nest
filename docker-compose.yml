@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15.3
+    restart: always #automaticamente se levanta la imagen
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME} # nombre de la base de datos
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./postgres:/var/lib/postgresql/data # espacio fisico en el cual quiero almacenar 
+    ports:
+      - 5433:5432 # computadora port 5432 al contenedor port 5432
